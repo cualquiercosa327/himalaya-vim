@@ -1,6 +1,6 @@
 # 📫 Himalaya Vim
 
-Vim plugin to manage emails, based on the [Himalaya CLI](https://github.com/soywod/himalaya).
+Vim front-end for the email client [Himalaya CLI](https://github.com/soywod/himalaya).
 
 ## Installation
 
