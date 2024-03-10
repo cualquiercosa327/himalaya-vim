@@ -4,6 +4,9 @@ let s:id = ''
 " Represents the current draft (used during edition).
 let s:draft = ''
 
+" Represents the current list envelopes query.
+let s:query = ''
+
 function! himalaya#domain#email#list(...) abort
   if a:0 > 0
     call himalaya#domain#account#select(a:1)
@@ -11,21 +14,22 @@ function! himalaya#domain#email#list(...) abort
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
   let page = himalaya#domain#folder#current_page()
-  call himalaya#domain#email#list_with(account, folder, page)
+  call himalaya#domain#email#list_with(account, folder, page, s:query)
 endfunction
 
-function! himalaya#domain#email#list_with(account, folder, page) abort
+function! himalaya#domain#email#list_with(account, folder, page, query) abort
   call himalaya#request#plain({
-  \ 'cmd': 'envelope list --account %s --max-width %d --page-size %d --page %d %s',
-  \ 'args': [shellescape(a:account), s:bufwidth(), winheight(0) - 1, a:page, shellescape(a:folder)],
+  \ 'cmd': 'envelope list --folder %s --account %s --max-width %d --page-size %d --page %d %s',
+  \ 'args': [shellescape(a:folder), shellescape(a:account), s:bufwidth(), winheight(0) - 1, a:page, a:query],
   \ 'msg': printf('Fetching %s envelopes', a:folder),
   \ 'on_data': {data -> s:list_with(a:folder, a:page, data)}
   \})
 endfunction
 
 function! s:list_with(folder, page, emails) abort
-  let buftype = stridx(bufname('%'), 'Himalaya emails') == 0 ? 'file' : 'edit'
-  execute printf('silent! %s Himalaya emails [%s] [page %d]', buftype, a:folder, a:page)
+  let buftype = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? 'file' : 'edit'
+  let query = empty(s:query) ? 'all' : s:query
+  execute printf('silent! %s Himalaya envelopes [%s] [%s] [page %d]', buftype, a:folder, query, a:page)
   setlocal modifiable
   silent execute '%d'
   call append(0, split(a:emails, "\n"))
@@ -65,7 +69,7 @@ endfunction
 function! himalaya#domain#email#download_attachments() abort
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   call himalaya#request#plain({
   \ 'cmd': 'attachment download --account %s --folder %s %s',
   \ 'args': [shellescape(account), shellescape(folder), id],
@@ -91,7 +95,7 @@ endfunction
 function! himalaya#domain#email#reply() abort
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   call himalaya#request#plain({
   \ 'cmd': 'template reply --account %s --folder %s %s',
   \ 'args': [shellescape(account), shellescape(folder), id],
@@ -103,7 +107,7 @@ endfunction
 function! himalaya#domain#email#reply_all() abort
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   call himalaya#request#plain({
   \ 'cmd': 'template reply --account %s --folder %s --all %s',
   \ 'args': [shellescape(account), shellescape(folder), id],
@@ -115,13 +119,18 @@ endfunction
 function! himalaya#domain#email#forward() abort
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   call himalaya#request#plain({
   \ 'cmd': 'template forward --account %s --folder %s %s',
   \ 'args': [shellescape(account), shellescape(folder), id],
   \ 'msg': 'Fetching forward template',
   \ 'on_data': {data -> s:write(printf('forward [%s]', id), data)},
   \})
+endfunction
+
+function! himalaya#domain#email#set_list_envelopes_query() abort
+  let s:query = input('Query: ')
+  call himalaya#domain#email#list()
 endfunction
 
 function! s:write(msg, email) abort
@@ -217,7 +226,7 @@ function! himalaya#domain#email#select_folder_then_copy() abort
 endfunction
 
 function! himalaya#domain#email#copy(folder) abort
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   let account = himalaya#domain#account#current()
   let folder = himalaya#domain#folder#current()
   call himalaya#request#plain({
@@ -233,7 +242,7 @@ function! himalaya#domain#email#select_folder_then_move() abort
 endfunction
 
 function! himalaya#domain#email#move(folder) abort
-  let id = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursor() : s:id
+  let id = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursor() : s:id
   let choice = input(printf('Are you sure you want to move the email %s? (y/N) ', id))
   redraw | echo
   if choice != 'y' | return | endif
@@ -248,7 +257,7 @@ function! himalaya#domain#email#move(folder) abort
 endfunction
 
 function! himalaya#domain#email#delete() abort range
-  let ids = stridx(bufname('%'), 'Himalaya emails') == 0 ? s:get_email_id_under_cursors(a:firstline, a:lastline) : s:id
+  let ids = stridx(bufname('%'), 'Himalaya envelopes') == 0 ? s:get_email_id_under_cursors(a:firstline, a:lastline) : s:id
   let choice = input(printf('Are you sure you want to delete email(s) %s? (y/N) ', ids))
   redraw | echo
   if choice != 'y' | return | endif
