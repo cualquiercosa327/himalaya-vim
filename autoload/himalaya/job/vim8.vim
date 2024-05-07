@@ -29,7 +29,7 @@ function! s:on_out(line) abort
 endfunction
 
 function! s:on_err(line) abort
-  let s:sterr += [a:line]
+  let s:stderr += [a:line]
 endfunction
 
 function! s:on_close(callback) abort
