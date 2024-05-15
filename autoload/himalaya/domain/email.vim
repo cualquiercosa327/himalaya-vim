@@ -233,7 +233,7 @@ function! himalaya#domain#email#copy(folder) abort
   \ 'cmd': 'message copy --account %s --folder %s %s %s',
   \ 'args': [shellescape(account), shellescape(folder), shellescape(a:folder), id],
   \ 'msg': 'Copying email',
-  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page())},
+  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page(), s:query)},
   \})
 endfunction
 
@@ -252,7 +252,7 @@ function! himalaya#domain#email#move(folder) abort
   \ 'cmd': 'message move --account %s --folder %s %s %s',
   \ 'args': [shellescape(account), shellescape(folder), shellescape(a:folder), id],
   \ 'msg': 'Moving email',
-  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page())},
+  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page(), s:query)},
   \})
 endfunction
 
@@ -267,7 +267,7 @@ function! himalaya#domain#email#delete() abort range
   \ 'cmd': 'message delete --account %s --folder %s %s',
   \ 'args': [shellescape(account), shellescape(folder), ids],
   \ 'msg': 'Deleting email',
-  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page())},
+  \ 'on_data': {-> himalaya#domain#email#list_with(account, folder, himalaya#domain#folder#current_page(), s:query)},
   \})
 endfunction
 
