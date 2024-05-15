@@ -1,10 +1,10 @@
-# 📫 Himalaya
+# 📫 Himalaya Vim
 
-Vim plugin for email management based on the [himalaya-cli](https://github.com/soywod/himalaya).
+Vim front-end for the email client [Himalaya CLI](https://github.com/soywod/himalaya).
 
 ## Installation
 
-First you need to install and configure the [himalaya CLI](https://github.com/soywod/himalaya#installation). Then you can install this plugin with your favorite plugin manager:
+First you need to install and configure the [Himalaya CLI](https://github.com/soywod/himalaya#installation). Then you can install this plugin with your favorite plugin manager:
 
 ### Using [packer](https://github.com/wbthomason/packer.nvim)
 
@@ -46,15 +46,13 @@ Override the default TOML configuration file.
 
 ### `g:himalaya_folder_picker`
 
-Defines the provider used for selecting folders (default keybind:
-`gm`):
+Defines the provider used for selecting folders (default keybind: `gm`):
 
 - `native` (default): a vim native input
 - `fzf`: https://github.com/junegunn/fzf.vim
 - `telescope`: https://github.com/nvim-telescope/telescope.nvim
 
-If no value given, the first loaded (and available) provider will be
-used (telescope > fzf > native).
+If no value given, the first loaded (and available) provider will be used (telescope > fzf > native).
 
 ```vim
 let g:himalaya_folder_picker = 'native' | 'fzf' | 'telescope'
@@ -62,8 +60,7 @@ let g:himalaya_folder_picker = 'native' | 'fzf' | 'telescope'
 
 ### `g:himalaya_folder_picker_telescope_preview`
 
-Enables folder preview when picking a folder with the `telescope.nvim`
-provider.
+Enables folder preview when picking a folder with the `telescope.nvim` provider.
 
 ```vim
 let g:himalaya_folder_picker_telescope_preview = 1
@@ -71,14 +68,9 @@ let g:himalaya_folder_picker_telescope_preview = 1
 
 ### `g:himalaya_complete_contact_cmd`
 
-Defines the command to use for contact completion. When this is set,
-`completefunc` will be set when composing emails so that contacts can
-be completed with `<C-x><C-u>`.
+Defines the command to use for contact completion. When this is set, `completefunc` will be set when composing emails so that contacts can be completed with `<C-x><C-u>`.
 
-The command must print each possible result on its own line. Each line
-must contain tab-separated fields; the first must be the email
-address, and the second, if present, must be the name. `%s` in the
-command will be replaced with the search query.
+The command must print each possible result on its own line. Each line must contain tab-separated fields; the first must be the email address, and the second, if present, must be the name. `%s` in the command will be replaced with the search query.
 
 ```vim
 let g:himalaya_complete_contact_cmd = '<your completion command>'
@@ -102,26 +94,27 @@ With the [fzf.vim](https://github.com/junegunn/fzf.vim) picker:
 
 ![screenshot](https://user-images.githubusercontent.com/10437171/113631382-acd05900-9669-11eb-817d-c28fd5d9574c.jpeg)
 
-### Emails listing
+### Envelope listing, filtering and sorting
 
 ```vim
 :Himalaya
 ```
 
-| Function                                         | Keybind   |
-|--------------------------------------------------|-----------|
-| Change the current folder                        | `gm`      |
-| Show previous page                               | `gp`      |
-| Show next page                                   | `gn`      |
-| Read email under cursor                          | `<Enter>` |
-| Write a new email                                | `gw`      |
-| Reply to the email under cursor                  | `gr`      |
-| Reply all to the email under cursor              | `gR`      |
-| Forward the email under cursor                   | `gf`      |
-| Download all attachments of email under cursor   | `ga`      |
-| Copy the email under cursor                      | `gC`      |
-| Move the email under cursor                      | `gM`      |
-| Delete email(s) under cursor or visual selection | `gD`      |
+| Function                                               | Keybind   |
+|--------------------------------------------------------|-----------|
+| Change the current folder                              | `gm`      |
+| Show previous page                                     | `gp`      |
+| Show next page                                         | `gn`      |
+| Read email under cursor                                | `<Enter>` |
+| Write a new email                                      | `gw`      |
+| Reply to the email under cursor                        | `gr`      |
+| Reply all to the email under cursor                    | `gR`      |
+| Forward the email under cursor                         | `gf`      |
+| Download all attachments of email under cursor         | `ga`      |
+| Copy the email under cursor                            | `gC`      |
+| Move the email under cursor                            | `gM`      |
+| Delete email(s) under cursor or visual selection       | `gD`      |
+| Filter and sort envelopes according to the given query | `g/`      |
 
 Keybinds can be customized:
 
@@ -138,9 +131,12 @@ nmap ga   <plug>(himalaya-email-download-attachments)
 nmap gC   <plug>(himalaya-email-copy)
 nmap gM   <plug>(himalaya-email-move)
 nmap gD   <plug>(himalaya-email-delete)
+nmap g/   <plug>(himalaya-set-list-envelopes-query)
 ```
 
-### Email reading
+*Note: see the [documentation](https://pimalaya.org/himalaya/cli/latest/usage/advanced/envelope/list.html#query) for more detailed information about the query API.*
+
+### Message reading
 
 | Function                       | Keybind |
 |--------------------------------|---------|
@@ -166,7 +162,7 @@ nmap gM <plug>(himalaya-email-move)
 nmap gD <plug>(himalaya-email-delete)
 ```
 
-### Email writing
+### Message writing
 
 | Function       | Keybind |
 |----------------|---------|
@@ -187,9 +183,7 @@ When you exit this special buffer, you will be prompted 4 choices:
 
 ## Development
 
-The development environment is managed by
-[Nix](https://nixos.org/download.html). Running `nix-shell` will spawn
-a shell with everything you need to get started with this plugin:
+The development environment is managed by [Nix](https://nixos.org/download.html). Running `nix-shell` will spawn a shell with everything you need to get started with this plugin:
 
 ```sh
 # starts a nix shell
@@ -204,42 +198,26 @@ $ nvim +Himalaya
 
 ## Contributing
 
-If you find a **bug**, please send an email at
-[~soywod/pimalaya@todo.sr.ht](mailto:~soywod/pimalaya@todo.sr.ht).
+A **bug tracker** is available on [SourceHut](https://todo.sr.ht/~soywod/pimalaya). <sup>[[send an email](mailto:~soywod/pimalaya@todo.sr.ht)]</sup>
 
-If you have a **question**, please send an email at
-[~soywod/pimalaya@lists.sr.ht](mailto:~soywod/pimalaya@lists.sr.ht).
+A **mailing list** is available on [SourceHut](https://lists.sr.ht/~soywod/pimalaya). <sup>[[send an email](mailto:~soywod/pimalaya@lists.sr.ht)] [[subscribe](mailto:~soywod/pimalaya+subscribe@lists.sr.ht)] [[unsubscribe](mailto:~soywod/pimalaya+unsubscribe@lists.sr.ht)]</sup>
 
-If you want to **propose a feature** or **fix a bug**, please send a
-patch at
-[~soywod/pimalaya@lists.sr.ht](mailto:~soywod/pimalaya@lists.sr.ht)
-using [git send-email](https://git-scm.com/docs/git-send-email) (see
-[this guide](https://git-send-email.io/) on how to configure it).
+If you want to **report a bug**, please send an email at [~soywod/pimalaya@todo.sr.ht](mailto:~soywod/pimalaya@todo.sr.ht).
 
-If you want to **subscribe** to the mailing list, please send an email
-at
-[~soywod/pimalaya+subscribe@lists.sr.ht](mailto:~soywod/pimalaya+subscribe@lists.sr.ht).
+If you want to **propose a feature** or **fix a bug**, please send a patch at [~soywod/pimalaya@lists.sr.ht](mailto:~soywod/pimalaya@lists.sr.ht). The simplest way to send a patch is to use [git send-email](https://git-scm.com/docs/git-send-email), follow [this guide](https://git-send-email.io/) to configure git properly.
 
-If you want to **unsubscribe** to the mailing list, please send an
-email at
-[~soywod/pimalaya+unsubscribe@lists.sr.ht](mailto:~soywod/pimalaya+unsubscribe@lists.sr.ht).
+If you just want to **discuss** about the project, feel free to join the [Matrix](https://matrix.org/) workspace [#pimalaya.himalaya](https://matrix.to/#/#pimalaya.himalaya:matrix.org) or contact me directly [@soywod](https://matrix.to/#/@soywod:matrix.org). You can also use the mailing list.
 
-If you want to **discuss** about the project, feel free to join the
-[Matrix](https://matrix.org/) workspace
-[#pimalaya.himalaya](https://matrix.to/#/#pimalaya.himalaya:matrix.org) or contact me
-directly [@soywod](https://matrix.to/#/@soywod:matrix.org).
-
-## Credits
+## Sponsoring
 
 [![nlnet](https://nlnet.nl/logo/banner-160x60.png)](https://nlnet.nl/project/Himalaya/index.html)
 
-Special thanks to the
-[nlnet](https://nlnet.nl/project/Himalaya/index.html) foundation that
-helped Himalaya to receive financial support from the [NGI
-Assure](https://www.ngi.eu/ngi-projects/ngi-assure/) program of the
-European Commission in September, 2022.
+Special thanks to the [NLnet foundation](https://nlnet.nl/project/Himalaya/index.html) and the [European Commission](https://www.ngi.eu/) that helped the project to receive financial support from:
 
-## Sponsoring
+- [NGI Assure](https://nlnet.nl/assure/) in 2022
+- [NGI Zero Entrust](https://nlnet.nl/entrust/) in 2023
+
+If you appreciate the project, feel free to donate using one of the following providers:
 
 [![GitHub](https://img.shields.io/badge/-GitHub%20Sponsors-fafbfc?logo=GitHub%20Sponsors)](https://github.com/sponsors/soywod)
 [![PayPal](https://img.shields.io/badge/-PayPal-0079c1?logo=PayPal&logoColor=ffffff)](https://www.paypal.com/paypalme/soywod)
