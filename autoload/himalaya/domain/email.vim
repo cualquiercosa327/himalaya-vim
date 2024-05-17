@@ -290,7 +290,7 @@ function! s:bufwidth() abort " https://newbedev.com/get-usable-window-width-in-v
 endfunction
 
 function! s:get_email_id_from_line(line) abort
-  return matchstr(a:line, '[0-9a-zA-Z]*')
+  return matchstr(a:line, '\d\+')
 endfunction
 
 function! s:get_email_id_under_cursor() abort
