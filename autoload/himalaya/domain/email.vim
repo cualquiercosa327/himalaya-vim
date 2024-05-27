@@ -138,7 +138,11 @@ function! s:write(msg, email) abort
   if a:msg == 'write'
     execute printf('silent! botright new %s', bufname)
   endif
-  execute printf('silent! edit %s', bufname)
+  if winnr('$') == 1
+    execute printf('silent! botright split %s', bufname)
+  else
+    execute printf('silent! edit %s', bufname)
+  endif
   setlocal modifiable
   silent execute '%d'
   call append(0, split(substitute(a:email, "\r", '', 'g'), "\n"))
